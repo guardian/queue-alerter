@@ -11,7 +11,7 @@ class TestRabbitMQConfig(TestCase):
         load_from_files should open files at the indicated location and return an initialised RabbitMQConfig
         :return:
         """
-        from rabbitmq_admin import RabbitMQConfig
+        from alerter.rabbitmq_admin import RabbitMQConfig
 
         result = RabbitMQConfig.load_from_files("test_data/load_from_file_ok", True)
         self.assertEqual(result.host, "rmqhost")
@@ -25,7 +25,7 @@ class TestRabbitMQConfig(TestCase):
         load_from_files should raise an exception if the uri provided is not valid
         :return:
         """
-        from rabbitmq_admin import RabbitMQConfig
+        from alerter.rabbitmq_admin import RabbitMQConfig
 
         with self.assertRaises(ValueError):
             RabbitMQConfig.load_from_files("test_data/load_from_file_invalid", True)
@@ -45,7 +45,7 @@ class TestGetQueuedMessageCount(TestCase):
         http_response.status_code = 200
         http_response.json = MagicMock(return_value=sample_content)
         with patch("requests.get", return_value=http_response) as mock_get:
-            from rabbitmq_admin import get_queued_message_count, RabbitMQConfig
+            from alerter.rabbitmq_admin import get_queued_message_count, RabbitMQConfig
             mqconfig = RabbitMQConfig("rabbitmq-host",None,"vhost",True,HTTPBasicAuth("user","password"))
 
             result = get_queued_message_count("somequeue", mqconfig)
@@ -70,7 +70,7 @@ class TestGetQueuedMessageCount(TestCase):
         http_responses[1].json = MagicMock(return_value=sample_content)
 
         with patch("requests.get", side_effect=http_responses) as mock_get:
-            from rabbitmq_admin import get_queued_message_count, RabbitMQConfig
+            from alerter.rabbitmq_admin import get_queued_message_count, RabbitMQConfig
             mqconfig = RabbitMQConfig("rabbitmq-host",None,"vhost",True,HTTPBasicAuth("user","password"))
 
             result = get_queued_message_count("somequeue", mqconfig)
@@ -102,7 +102,7 @@ class TestGetQueuedMessageCount(TestCase):
         http_response.json = MagicMock(return_value=sample_content)
 
         with patch("requests.get", return_value=http_response) as mock_get:
-            from rabbitmq_admin import get_queued_message_count, RabbitMQConfig
+            from alerter.rabbitmq_admin import get_queued_message_count, RabbitMQConfig
             mqconfig = RabbitMQConfig("rabbitmq-host",None,"vhost",True,HTTPBasicAuth("user","password"))
 
             with self.assertRaises(RuntimeError):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
-from rabbitmq_admin import RabbitMQConfig, get_queued_message_count
-from pagerduty import notify_pagerduty
+from alerter.rabbitmq_admin import RabbitMQConfig, get_queued_message_count
+from alerter.pagerduty import notify_pagerduty
 import yaml
 import logging
 import time
