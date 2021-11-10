@@ -2,6 +2,11 @@ build:
   image: python:3.9-alpine  # nosetests uses collections.Mapping which is discontinued in 3.10
   services:
     - docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs" #this is mounted by the gitlab CI system so is populated from the dind service
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_VERIFY: 1
   script:
     - apk add docker-cli
     - pip install -r requirements.txt awscli
