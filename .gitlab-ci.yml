@@ -3,10 +3,10 @@ build:
   services:
     - docker:dind
   script:
-    - apk add docker-cli aws-cli
-    - pip install -r requirements.txt
+    - apk add docker-cli
+    - pip install -r requirements.txt awscli
     - nosetests --with-xunit -v tests/
-    - cd src/ && python ./setup.py sdist
+    - cd src/ && python ./setup.py sdist && cd ..
     - docker build . -t 855023211239.dkr.ecr.eu-west-1.amazonaws.com/queue-alerter:$CI_PIPELINE_IID
     - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 855023211239.dkr.ecr.eu-west-1.amazonaws.com
     - docker push 855023211239.dkr.ecr.eu-west-1.amazonaws.com/queue-alerter:$CI_PIPELINE_IID
