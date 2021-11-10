@@ -10,9 +10,13 @@ logger = logging.getLogger(__name__)
 
 
 def run_check(config: list):
+    if os.environ.get("SERVICE_KEY") is None or os.environ.get("SERVICE_KEY")=="":
+        raise ValueError("You must specify SERVICE_KEY to indicate the PagerDuty service key to send alerts to")
+
     rmqpath = os.environ.get("RABBITMQ_CONFIG_PATH")
-    if rmqpath is None or rmqpath=="":
+    if rmqpath is None or rmqpath == "":
         raise ValueError("You must specify RABBITMQ_CONFIG_PATH to indicate where the rabbitmq_client_uri file is located")
+
     no_ssl = os.environ.get("RABBITMQ_NO_SSL")
     use_ssl = no_ssl.lower() != "true"
 
