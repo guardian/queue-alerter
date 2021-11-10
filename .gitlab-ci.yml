@@ -8,8 +8,8 @@ build:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_VERIFY: 1
   script:
-    - apk add docker-cli aws-cli
-    - pip install -r requirements.txt
+    - apk add docker-cli
+    - pip install -r requirements.txt awscli
     - nosetests --with-xunit -v tests/
     - cd src/ && python ./setup.py sdist && cd ..
     - mkdir ~/.docker && cp -a /certs/client/*.pem ~/.docker
