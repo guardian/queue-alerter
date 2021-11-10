@@ -4,7 +4,9 @@ import logging
 import time
 from typing import Optional
 from urllib.parse import urlparse
+
 logger = logging.getLogger(__name__)
+logger.level = logging.INFO
 
 
 class RabbitMQConfig(object):

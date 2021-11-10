@@ -6,8 +6,10 @@ import yaml
 import logging
 import time
 
+LOGFORMAT = '%(asctime)s %(name)s|%(funcName)s [%(levelname)s] %(message)s'
+logging.basicConfig(format=LOGFORMAT, level=logging.WARNING)
 logger = logging.getLogger(__name__)
-
+logger.level = logging.INFO
 
 def run_check(config: list):
     if os.environ.get("SERVICE_KEY") is None or os.environ.get("SERVICE_KEY")=="":
@@ -18,16 +20,19 @@ def run_check(config: list):
         raise ValueError("You must specify RABBITMQ_CONFIG_PATH to indicate where the rabbitmq_client_uri file is located")
 
     no_ssl = os.environ.get("RABBITMQ_NO_SSL")
-    use_ssl = no_ssl.lower() != "true"
+    if no_ssl is None:
+        use_ssl = True
+    else:
+        use_ssl = no_ssl.lower() != "true"
 
     rmqconfig = RabbitMQConfig.load_from_files(rmqpath, use_ssl)
     for entry in config:
-        current_messages = get_queued_message_count(entry["queuename"], rmqconfig)
-        logger.info("Currently there are {0} messages on the {1} queue".format(current_messages, entry["queuename"]))
+        current_messages = get_queued_message_count(entry["queue"], rmqconfig)
+        logger.info("Currently there are {0} messages on the {1} queue".format(current_messages, entry["queue"]))
         if current_messages > entry["threshold"]:
-            logger.warning("{0} is over the threshold of {1} so alerting...".format(entry["queuename"], entry["threshold"]))
-            msg = "The queue {0} currently has {1} messages which exceeds the alert threshold. Please investigate."
-            notify_pagerduty(msg, "trigger", "queuesize-{0}".format(entry["queuename"]), current_messages)
+            logger.warning("{0} is over the threshold of {1} so alerting...".format(entry["queue"], entry["threshold"]))
+            msg = "The queue {0} currently has {1} messages which exceeds the alert threshold. Please investigate.".format(entry["queue"], current_messages)
+            notify_pagerduty(msg, "trigger", "queuesize-{0}".format(entry["queue"]), current_messages)
 
 
 def validate_config(config: list):
@@ -69,6 +74,10 @@ if __name__ == "__main__":
         appconfig = yaml.safe_load(f)
 
     validate_config(appconfig)
+
+    logger.info("Starting up queue-alerter, monitoring {0} queues every {1} seconds:".format(len(appconfig), sleeptime))
+    for entry in appconfig:
+        logger.info("\t{0}: alert if more than {1} messages waiting".format(entry["queue"], entry["threshold"]))
 
     while True:
         run_check(appconfig)
