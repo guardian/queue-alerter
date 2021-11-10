@@ -1,5 +1,5 @@
 build:
-  image: python:3.10-alpine
+  image: python:3.9-alpine  # nosetests uses collections.Mapping which is discontinued in 3.10
   services:
     - docker:dind
   script:
