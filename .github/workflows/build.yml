@@ -52,7 +52,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - run: docker build build -t "guardianmultimedia/queue-alerter:${{ env.GITHUB_RUN_NUMBER }}"
+      - run: docker build . -t "guardianmultimedia/queue-alerter:${{ env.GITHUB_RUN_NUMBER }}"
 
       - name: Tag Docker image queue-alerter
         run: docker tag guardianmultimedia/queue-alerter:${{ env.GITHUB_RUN_NUMBER }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/queue-alerter:${{ env.GITHUB_RUN_NUMBER }}
