@@ -2,8 +2,7 @@ name: Build and Upload queue-alerter
 
 on:
   push:
-    branches:
-      - "**"
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
